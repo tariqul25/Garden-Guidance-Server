@@ -1,6 +1,6 @@
 const express = require('express')
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express()
 const cors = require('cors');
 const port = process.env.PORT || 3000
@@ -19,7 +19,7 @@ const client = new MongoClient(uri, {
         deprecationErrors: true,
     }
 });
-        
+
 
 async function run() {
     try {
@@ -37,7 +37,7 @@ async function run() {
         const db = client.db("gardenersdb");
         await db.createCollection("gardener");
 
-        
+
         // db and collection reference for data retrieve
         const gardenersCollection = client.db('gardenersdb').collection('gardener')
 
@@ -52,7 +52,25 @@ async function run() {
             res.send(result)
         });
 
+        app.get('/api/publictips', async (req, res) => {
+            const cursor = { availability: "Public" };
+            const result = await tipsCollection.find(cursor).toArray();
+            res.send(result)
+        })
 
+        app.get('/api/publictips/:id', async (req, res) => {
+            const id =req.params.id;
+            const query= {_id :new ObjectId(id)}
+            const result = await tipsCollection.findOne(query);
+            res.send(result)
+        })
+
+        app.get('/api/sharetips/:email', async (req, res) => {
+            const email =req.params.email;
+            const query= {userEmail :email}
+            const result = await tipsCollection.find(query).toArray();
+            res.send(result)
+        })
 
         app.post('/api/sharetips', async (req, res) => {
             console.log('data in the server', req.body);
