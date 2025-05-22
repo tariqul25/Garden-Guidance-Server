@@ -19,12 +19,49 @@ const client = new MongoClient(uri, {
         deprecationErrors: true,
     }
 });
-
+        
 
 async function run() {
     try {
-        // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
+
+        const tipsCollection = client.db('tipsdb').collection('tips')
+
+
+        app.get('/api/sharetips', async (req, res) => {
+            const result = await tipsCollection.find().toArray()
+            res.send(result)
+        })
+
+        // empty db and collection creation 
+        const db = client.db("gardenersdb");
+        await db.createCollection("gardener");
+
+        
+        // db and collection reference for data retrieve
+        const gardenersCollection = client.db('gardenersdb').collection('gardener')
+
+        // data retrieve
+        app.get('/api/gardeners', async (req, res) => {
+            const result = await gardenersCollection.find({ status: "active" }).limit(6).toArray()
+            res.send(result)
+        });
+
+        app.get('/api/top-trending', async (req, res) => {
+            const result = await gardenersCollection.find({ trending: "top" }).toArray()
+            res.send(result)
+        });
+
+
+
+        app.post('/api/sharetips', async (req, res) => {
+            console.log('data in the server', req.body);
+            const newTips = req.body
+            const result = await tipsCollection.insertOne(newTips)
+            res.send(result)
+        })
+
+
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -38,6 +75,7 @@ run().catch(console.dir);
 app.get('/', (req, res) => {
     res.send('gardern guidance server is running smoothly...');
 })
+
 
 app.listen(port, () => {
     console.log(`server is running from: ${port}`);
