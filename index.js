@@ -32,10 +32,6 @@ async function run() {
             res.send(result)
         })
 
-        // empty db and collection creation 
-
-       
-
 
         // db and collection reference for data retrieve
         const gardenersCollection = client.db('gardenersdb').collection('gardener')
@@ -112,8 +108,6 @@ async function run() {
             const result = await tipsCollection.deleteOne(query);
             res.send(result)
         })
-
-
 
 
 
