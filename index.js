@@ -92,13 +92,13 @@ async function run() {
             const filter = { _id: new ObjectId(id) };
             const updatedTips = req.body;
 
-            const updatedDoc = { 
-                $set: updatedTips 
+            const updatedDoc = {
+                $set: updatedTips
             };
 
-            const captions ={upsert: true}
+            const captions = { upsert: true }
 
-            const result = await tipsCollection.updateOne(filter, updatedDoc,captions);
+            const result = await tipsCollection.updateOne(filter, updatedDoc, captions);
             res.send(result);
         });
 
