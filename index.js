@@ -48,7 +48,8 @@ async function run() {
         });
 
         app.get('/api/top-trending', async (req, res) => {
-            const result = await gardenersCollection.find({ trending: "top" }).toArray()
+            const cursor = { trending: "top" };
+            const result = await gardenersCollection.find(cursor).toArray()
             res.send(result)
         });
 
@@ -59,18 +60,48 @@ async function run() {
         })
 
         app.get('/api/publictips/:id', async (req, res) => {
-            const id =req.params.id;
-            const query= {_id :new ObjectId(id)}
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
             const result = await tipsCollection.findOne(query);
             res.send(result)
         })
 
         app.get('/api/sharetips/:email', async (req, res) => {
-            const email =req.params.email;
-            const query= {userEmail :email}
+            const email = req.params.email;
+            const query = { userEmail: email }
             const result = await tipsCollection.find(query).toArray();
             res.send(result)
         })
+
+        app.delete('/api/sharetips/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await tipsCollection.deleteOne(query);
+            res.send(result)
+        })
+
+        app.get('/api/updatetips/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await tipsCollection.findOne(query);
+            res.send(result)
+        })
+
+        app.put('/api/updatetips/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            const updatedTips = req.body;
+
+            const updatedDoc = { 
+                $set: updatedTips 
+            };
+
+            const captions ={upsert: true}
+
+            const result = await tipsCollection.updateOne(filter, updatedDoc,captions);
+            res.send(result);
+        });
+
 
         app.post('/api/sharetips', async (req, res) => {
             console.log('data in the server', req.body);
