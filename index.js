@@ -33,8 +33,8 @@ async function run() {
         })
 
         // empty db and collection creation 
-        const db = client.db("gardenersdb");
-        await db.createCollection("gardener");
+
+       
 
 
         // db and collection reference for data retrieve
