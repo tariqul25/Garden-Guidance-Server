@@ -23,7 +23,6 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
-        await client.connect();
 
         const tipsCollection = client.db('tipsdb').collection('tips')
 
@@ -41,24 +40,30 @@ async function run() {
         // db and collection reference for data retrieve
         const gardenersCollection = client.db('gardenersdb').collection('gardener')
 
-        // data retrieve
+        // active data retrieve
         app.get('/api/gardeners', async (req, res) => {
             const result = await gardenersCollection.find({ status: "active" }).limit(6).toArray()
             res.send(result)
         });
-
+        // allgardeners profile
+        app.get('/api/allgardeners', async (req, res) => {
+            const result = await gardenersCollection.find().toArray()
+            res.send(result)
+        });
+        // top trending tips
         app.get('/api/top-trending', async (req, res) => {
             const cursor = { trending: "top" };
             const result = await gardenersCollection.find(cursor).toArray()
             res.send(result)
         });
 
+        // public tips
         app.get('/api/publictips', async (req, res) => {
             const cursor = { availability: "Public" };
             const result = await tipsCollection.find(cursor).toArray();
             res.send(result)
         })
-
+         
         app.get('/api/publictips/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
@@ -73,17 +78,17 @@ async function run() {
             res.send(result)
         })
 
-        app.delete('/api/sharetips/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: new ObjectId(id) }
-            const result = await tipsCollection.deleteOne(query);
-            res.send(result)
-        })
-
         app.get('/api/updatetips/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
             const result = await tipsCollection.findOne(query);
+            res.send(result)
+        })
+
+        app.post('/api/sharetips', async (req, res) => {
+            console.log('data in the server', req.body);
+            const newTips = req.body
+            const result = await tipsCollection.insertOne(newTips)
             res.send(result)
         })
 
@@ -101,14 +106,15 @@ async function run() {
             const result = await tipsCollection.updateOne(filter, updatedDoc, captions);
             res.send(result);
         });
-
-
-        app.post('/api/sharetips', async (req, res) => {
-            console.log('data in the server', req.body);
-            const newTips = req.body
-            const result = await tipsCollection.insertOne(newTips)
+        app.delete('/api/sharetips/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await tipsCollection.deleteOne(query);
             res.send(result)
         })
+
+
+
 
 
         // Send a ping to confirm a successful connection
