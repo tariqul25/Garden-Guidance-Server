@@ -38,7 +38,7 @@ async function run() {
 
         // active data retrieve
         app.get('/api/gardeners', async (req, res) => {
-            const result = await gardenersCollection.find({ status: "active" }).limit(6).toArray()
+            const result = await gardenersCollection.find({ status: "active" }).limit(8).toArray()
             res.send(result)
         });
         // allgardeners profile
@@ -49,7 +49,12 @@ async function run() {
         // top trending tips
         app.get('/api/top-trending', async (req, res) => {
             const cursor = { trending: "top" };
-            const result = await gardenersCollection.find(cursor).toArray()
+            const result = await tipsCollection.find(cursor).toArray()
+            res.send(result)
+        });
+        // trending categories
+        app.get('/api/alltips', async (req, res) => {
+            const result = await tipsCollection.find().toArray()
             res.send(result)
         });
 
@@ -59,7 +64,7 @@ async function run() {
             const result = await tipsCollection.find(cursor).toArray();
             res.send(result)
         })
-         
+
         app.get('/api/publictips/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
