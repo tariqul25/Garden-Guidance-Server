@@ -41,6 +41,11 @@ async function run() {
             const result = await gardenersCollection.find({ status: "active" }).limit(8).toArray()
             res.send(result)
         });
+        // all active
+        app.get('/api/active-gardener', async (req, res) => {
+            const result = await gardenersCollection.find({ status: "active" }).toArray()
+            res.send(result)
+        });
         // allgardeners profile
         app.get('/api/allgardeners', async (req, res) => {
             const result = await gardenersCollection.find().toArray()
