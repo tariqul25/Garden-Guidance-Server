@@ -38,7 +38,7 @@ async function run() {
 
         // active data retrieve
         app.get('/api/gardeners', async (req, res) => {
-            const result = await gardenersCollection.find({ status: "active" }).limit(8).toArray()
+            const result = await gardenersCollection.find({ status: "active" }).limit(7).toArray()
             res.send(result)
         });
         // all active
