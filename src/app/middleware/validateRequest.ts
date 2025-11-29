@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 
-const validateRequest = (schema: any) => { // let TS infer schema type
+const validateRequest = (schema: any) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
-      schema.parse(req.body); // validate req.body
+      schema.parse(req.body); 
       next();
     } catch (error) {
       if (error instanceof ZodError) {
