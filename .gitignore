@@ -1,9 +1,4 @@
 node_modules
-<<<<<<< HEAD
 dist
 .env
 .vercel
-=======
-.env
-.vercel
->>>>>>> 12ce56bb2d99aec889b31b010b9b189266746c28
